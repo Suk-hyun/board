@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,20 +20,22 @@ public class BoardService {
     //글 작성 처리
     public void write(Board board, MultipartFile file) throws Exception {
         // 매개변수로 받는 변수의 이름인 file 과 boardwrite.html 에 있는 input 태그의 name="" 값이 일치해야 된당
-        String projectPath = System.getProperty("user.dir") + "/src/main/resources/static/files";
 
-        UUID uuid = UUID.randomUUID();
 
-        String fileName;
+        if (!file.isEmpty()) {
+            String projectPath = System.getProperty("user.dir") + "/src/main/resources/static/files";
 
-        fileName = uuid + "_" + file.getOriginalFilename();
+            UUID uuid = UUID.randomUUID();
 
-        File saveFile = new File(projectPath, fileName);
+            String fileName = uuid + "_" + file.getOriginalFilename();
 
-        file.transferTo(saveFile);
+            File saveFile = new File(projectPath, fileName);
 
-        board.setFilename(fileName);
-        board.setFilepath("/files/" + fileName);
+            file.transferTo(saveFile);
+
+            board.setFilename(fileName);
+            board.setFilepath("/files/" + fileName);
+        }
 
         boardRepository.save(board);
     }

@@ -20,6 +20,11 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/board/list";
+    }
+
     @GetMapping("/board/write")
     public String boardWriteForm() {
         return "boardwrite";
@@ -70,11 +75,13 @@ public class BoardController {
     }
 
     @GetMapping("/board/delete")
-    public String boardDelete(Integer id) {
+    public String boardDelete(Integer id, Model model) {
 
         boardService.boardDelete(id);
 
-        return "redirect:/board/list";
+        model.addAttribute("message", "글 삭제가 완료 되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+        return "message";
     }
 
     @GetMapping("/board/modify/{id}")
@@ -86,7 +93,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id") Integer id, Board board, MultipartFile file) throws Exception {
+    public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model,MultipartFile file) throws Exception {
 //여기서 file 이 널이면 안되는듯
         Board boardTemp = boardService.boardView(id);
 
@@ -95,6 +102,8 @@ public class BoardController {
 
         boardService.write(boardTemp, file);
 
-        return "redirect:/board/list";
+        model.addAttribute("message", "수정이 완료 되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+        return "message";
     }
 }
